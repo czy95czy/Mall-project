@@ -10,14 +10,6 @@ public class UserModel {
     private String thirdPartyId;
     private String encrptPassword;
 
-    public String getEncrptPassword() {
-        return encrptPassword;
-    }
-
-    public void setEncrptPassword(String encrptPassword) {
-        this.encrptPassword = encrptPassword;
-    }
-
     public Integer getId() {
         return id;
     }
@@ -34,24 +26,19 @@ public class UserModel {
         this.name = name;
     }
 
+    public Byte getGender() {
+        return gender;
+    }
+
     public void setGender(Byte gender) {
         this.gender = gender;
     }
 
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public int getGender() {
-        return gender;
-    }
-
-
-    public int getAge() {
+    public Integer getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
 
@@ -77,5 +64,13 @@ public class UserModel {
 
     public void setThirdPartyId(String thirdPartyId) {
         this.thirdPartyId = thirdPartyId;
+    }
+
+    public String getEncrptPassword() {
+        return encrptPassword;
+    }
+
+    public void setEncrptPassword(String encrptPassword) {
+        this.encrptPassword = encrptPassword;
     }
 }

@@ -12,9 +12,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import sun.misc.BASE64Encoder;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 import static com.miaoshaproject.miaosha.controller.BaseController.CONTENT_TYPE_FORMED;
@@ -27,7 +31,8 @@ import static com.miaoshaproject.miaosha.controller.BaseController.CONTENT_TYPE_
  */
 @RestController("user")
 @RequestMapping(value = "/user")
-@CrossOrigin
+//Defult_Allow_Credentials = "true":需要配合前端设置xhrFields授信后使得session共享
+@CrossOrigin(allowCredentials = "true",allowedHeaders = "*")
 public class UserController extends BaseController{
     @Autowired
     private UserService userService;
@@ -44,9 +49,10 @@ public class UserController extends BaseController{
                                      @RequestParam(name = "name")String name,
                                      @RequestParam(name = "gender")Integer gender,
                                      @RequestParam(name = "age")Integer age,
-                                     @RequestParam(name = "password")String password) throws BusinessException {
+                                     @RequestParam(name = "password")String password) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
         //验证手机号和对应的otpCode相符合
         String inSessionOtpCode = (String) this.httpServletRequest.getSession().getAttribute(telphone);
+        System.out.println(inSessionOtpCode);
         //为什么要用alibaba.druid中的equals呢？因为在内部为我们进行了null字符串进行判断，如果两个字符串都为null的话返回true，否则调用equals方法
         if (StringUtils.equals(otpCode,inSessionOtpCode)){
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,"短信验证码不符合");
@@ -58,10 +64,18 @@ public class UserController extends BaseController{
         userModel.setAge(age);
         userModel.setTelphone(telphone);
         userModel.setRegisterMode("byphone");
-        //密码进行加密
-        userModel.setEncrptPassword(MD5Encoder.encode(password.getBytes()));
+        userModel.setEncrptPassword(this.EncodeByMD5(password));
         userService.register(userModel);
+        System.out.println(userModel);
         return CommonReturnType.create(null);
+    }
+    public String EncodeByMD5(String str) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        //确定计算方法
+        MessageDigest md5 = MessageDigest.getInstance("MD5");
+        BASE64Encoder base64 = new BASE64Encoder();
+        //加密字符串
+        String newstr = base64.encode(md5 .digest(str.getBytes("UTF-8")));
+        return newstr;
     }
 
     //用户获取otp短信接口,method必须映射到http post 请求才能生效
@@ -82,8 +96,6 @@ public class UserController extends BaseController{
         return CommonReturnType.create(null);
     }
 
-
-
     //接受入参RequestParam注解
     @RequestMapping("/get")
     public CommonReturnType getUser(@RequestParam(name = "id")Integer id) throws BusinessException {
@@ -95,7 +107,6 @@ public class UserController extends BaseController{
             userModel.setEncrptPassword("231");
 //            throw new BusinessException(EmBusinessError.USER_NOT_EXIST);
         }
-
 
         //将核心领域模型用户对象转化为可供UI使用的viewObject
         UserVO userVO =  convertFromModel(userModel );
@@ -111,7 +122,4 @@ public class UserController extends BaseController{
         BeanUtils.copyProperties(userModel,userVO);
         return userVO;
     }
-
-
-
 }
