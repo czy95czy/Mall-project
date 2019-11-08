@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * @author cuizhiyuan
  */
-public class validationResult {
+public class ValidationResult {
     //校验结果是否有错，定义值 避免内部出现空指针的错误
     private boolean  hasErrors = false;
 

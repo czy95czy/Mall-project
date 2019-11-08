@@ -7,8 +7,8 @@ import com.miaoshaproject.miaosha.error.BusinessException;
 import com.miaoshaproject.miaosha.error.EmBusinessError;
 import com.miaoshaproject.miaosha.service.UserService;
 import com.miaoshaproject.miaosha.service.model.UserModel;
-import com.miaoshaproject.miaosha.validator.validationResult;
-import com.miaoshaproject.miaosha.validator.validatorImpl;
+import com.miaoshaproject.miaosha.validator.ValidationResult;
+import com.miaoshaproject.miaosha.validator.ValidatorImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DuplicateKeyException;
@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     private UserPasswordDOMapper userPasswordDOMapper;
 
     @Resource
-    private validatorImpl validator;
+    private ValidatorImpl validator;
     @Override
     public UserModel getUserById(Integer id) {
         //调用userDOMapper获取到对应的用户dataObject,UserDO绝对不能给前端
@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
         }
         //校验错误信息
-        validationResult result = (validationResult) validator.validate(userModel);
+        ValidationResult result = (ValidationResult) validator.validate(userModel);
         if (result.isHasErrors()){
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR ,result.gerErrorMsg());
         }

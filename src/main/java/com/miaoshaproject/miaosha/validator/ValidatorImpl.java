@@ -12,7 +12,7 @@ import java.util.Set;
  * @Component:代表是spring 的bean，在进行类扫描的时候会扫描到他
  */
 @Component
-public class validatorImpl implements InitializingBean {
+public class ValidatorImpl implements InitializingBean {
     /**
      * 当Spring  Bean 初始化完成之后会回调 对应的validatorImpl 的 afterPropertiesSet 方式
      * Validator:是javax 定义的接口实现的Validator的工具
@@ -20,8 +20,8 @@ public class validatorImpl implements InitializingBean {
     private Validator validator;
 
     //实现校验方法并返回校验结果
-    public validationResult validate(Object bean){
-         validationResult result = new validationResult();
+    public ValidationResult validate(Object bean){
+         ValidationResult result = new ValidationResult();
          //validate：源码 入参对应要校验的bean，出参返回Set就是对应方法的ConstraintViolation
         //如果对应的bean内的参数规则有违背对应validation定义的，constraintViolationSet里面就会有值
          Set<ConstraintViolation<Object>> constraintViolationSet =  validator.validate(bean);
