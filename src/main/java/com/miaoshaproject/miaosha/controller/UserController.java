@@ -41,6 +41,26 @@ public class UserController extends BaseController{
     //内部拥有sereadlocal方式的map，让用户在每个线程中处理自己的线程request。
     @Resource
     private HttpServletRequest httpServletRequest;
+    //用户登陆接口
+    @RequestMapping(value = "/login",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
+    public CommonReturnType login(@RequestParam(name = "telphone")String telphone,
+                                  @RequestParam(name = "password ")String password) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
+        //入参校验，保证用户输入的手机号不能为空
+        if (org.apache.commons.lang3.StringUtils.isEmpty(telphone) ||
+                org.apache.commons.lang3.StringUtils.isEmpty(password)){
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+        }
+        //用户登陆服务，用来校验用户登陆是否合法
+        UserModel userModel = userService.validataLogin(telphone,this.EncodeByMD5(password));
+        //将登陆凭证（token）加入到用户登陆成功的session,如果用户登陆的会话标识中有IS_LOGIN，就证明登陆成功,如果用户登陆成功，将userModel放到session内，
+        this.httpServletRequest.getSession().setAttribute("IS_LOGIN",true);
+        this.httpServletRequest.getSession().setAttribute("LOGIN_USER",userModel);
+
+        return CommonReturnType.create(null);
+    }
+
+
+
 
     //用户注册接口
     @RequestMapping(value = "/register",method = {RequestMethod.POST},consumes = {CONTENT_TYPE_FORMED})
