@@ -10,5 +10,10 @@ public interface UserService {
     //通过用户id获取用户对象的方法
     UserModel  getUserById(Integer id);
 
+    /*
+       telphone：用户注册的手机
+       password：用户加密后的密码
+     */
     void register(UserModel userModel) throws BusinessException;
+    UserModel validataLogin(String telphone,String encrptPassword) throws BusinessException;
 }
