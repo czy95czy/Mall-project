@@ -30,7 +30,6 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private validatorImpl validator;
-
     @Override
     public UserModel getUserById(Integer id) {
         //调用userDOMapper获取到对应的用户dataObject,UserDO绝对不能给前端
