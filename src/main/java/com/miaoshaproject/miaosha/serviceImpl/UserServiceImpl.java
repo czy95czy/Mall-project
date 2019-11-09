@@ -59,14 +59,12 @@ public class UserServiceImpl implements UserService {
         UserDO userDO = convertFromModel(userModel);
         //由于在telphone字段新建唯一索引，为用户良好体验catch异常
         try {
-
+            userDOMapper.insertSelective(userDO);
         }catch (DuplicateKeyException e){
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,"该手机号已注册");
         }
         //这里为什么使用insertSelective而不使用insert，因为insertSelective，加入了判断，较为准确
-        userDOMapper.insertSelective(userDO);
-
-
+        userModel.setId(userDO.getId());
         UserPasswordDO userPasswordDO = converyPasswordFromModel(userModel);
         userPasswordDOMapper.insertSelective(userPasswordDO);
     }

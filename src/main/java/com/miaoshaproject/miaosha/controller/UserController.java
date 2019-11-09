@@ -72,9 +72,8 @@ public class UserController extends BaseController{
                                      @RequestParam(name = "password")String password) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
         //验证手机号和对应的otpCode相符合
         String inSessionOtpCode = (String) this.httpServletRequest.getSession().getAttribute(telphone);
-        System.out.println(inSessionOtpCode);
-        //为什么要用alibaba.druid中的equals呢？因为在内部为我们进行了null字符串进行判断，如果两个字符串都为null的话返回true，否则调用equals方法
-        if (StringUtils.equals(otpCode,inSessionOtpCode)){
+//        为什么要用alibaba.druid中的equals呢？因为在内部为我们进行了null字符串进行判断，如果两个字符串都为null的话返回true，否则调用equals方法
+        if (!StringUtils.equals(otpCode,inSessionOtpCode)){
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,"短信验证码不符合");
         }
         //用户的注册流程
@@ -86,9 +85,9 @@ public class UserController extends BaseController{
         userModel.setRegisterMode("byphone");
         userModel.setEncrptPassword(this.EncodeByMD5(password));
         userService.register(userModel);
-        System.out.println(userModel);
         return CommonReturnType.create(null);
     }
+
     public String EncodeByMD5(String str) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         //确定计算方法
         MessageDigest md5 = MessageDigest.getInstance("MD5");
